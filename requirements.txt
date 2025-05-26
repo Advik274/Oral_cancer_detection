@@ -1,0 +1,15 @@
+streamlit
+numpy
+tensorflow
+opencv-python-headless
+pillow
+streamlit-option-menu
+pandas
+scikit-learn
+streamlit-lottie
+matplotlib
+graphviz==0.20.3  # or whatever version you need
+pydot
+gdown==5.2.0
+
+

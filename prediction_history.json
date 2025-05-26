@@ -1,0 +1,187 @@
+[
+    {
+        "file_name": "006.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "008.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "226.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "227.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "228.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "176.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "177.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "178.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "021.jpeg",
+        "model_used": "VGG19",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "022.jpeg",
+        "model_used": "VGG19",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "008.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "142.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Non Cancer"
+    },
+    {
+        "file_name": "031.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "032.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "036.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "037.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "016.jpeg",
+        "model_used": "EfficientNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "017.jpeg",
+        "model_used": "EfficientNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "EfficientNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "008.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "007.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "006.jpeg",
+        "model_used": "DenseNet",
+        "prediction": "Cancer"
+    },
+    {
+        "file_name": "001.jpeg",
+        "model_used": "ResNet50",
+        "prediction": "Cancer"
+    }
+]
