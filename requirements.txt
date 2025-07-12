@@ -11,5 +11,3 @@ matplotlib
 graphviz==0.20.3
 pydot
 gdown==5.2.0
-
-
