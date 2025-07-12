@@ -45,12 +45,12 @@ def download_model_if_needed(model_name, local_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
 
-def download_test_folder_from_drive(folder_url, output_dir="test"):
-    # Extract folder ID from URL
-    if "folders/" in folder_url:
-        folder_id = folder_url.split("folders/")[1].split("?")[0]
-    else:
-        folder_id = folder_url
+# Hardcoded Google Drive test folder URL
+TEST_FOLDER_URL = "https://drive.google.com/drive/folders/1M2w4lWrV5iJ3lML78tqv2MLIij8Q89U8?usp=sharing"
+
+def download_test_folder_from_drive(output_dir="test"):
+    import gdown
+    folder_id = TEST_FOLDER_URL.split("folders/")[1].split("?")[0]
     gdown.download_folder(id=folder_id, output=output_dir, quiet=False, use_cookies=False)
 
 def show_comparison():
@@ -111,15 +111,9 @@ def show_comparison():
 
     selected_models = st.multiselect("Select Models to Compare", list(model_paths.keys()))
 
-    # New: Google Drive folder input
-    test_folder_url = st.text_input("https://drive.google.com/drive/folders/1M2w4lWrV5iJ3lML78tqv2MLIij8Q89U8?usp=sharing")
-
     if st.button("Download Test Data from Google Drive"):
-        if test_folder_url:
-            download_test_folder_from_drive(test_folder_url)
-            st.success("Test data downloaded!")
-        else:
-            st.error("Please enter a valid Google Drive folder URL.")
+        download_test_folder_from_drive()
+        st.success("Test data downloaded!")
 
     # Use the downloaded folder for evaluation
     test_data_path = "./test"
