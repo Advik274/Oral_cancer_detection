@@ -6,6 +6,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classifica
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.models import load_model
 import gdown
+import zipfile
 
 # Define the model paths and their target sizes
 model_paths = {
@@ -46,13 +47,16 @@ def download_model_if_needed(model_name, local_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
 
-# Hardcoded Google Drive test folder URL
-TEST_FOLDER_URL = "https://drive.google.com/drive/folders/1M2w4lWrV5iJ3lML78tqv2MLIij8Q89U8?usp=sharing"
+# Hardcoded Google Drive test zip file URL
+TEST_ZIP_URL = "https://drive.google.com/uc?id=1dCJGxtebi9yJ-ZVeVb50UeATuUdhgxx3"
+ZIP_PATH = "test.zip"
+EXTRACT_DIR = "test"
 
-def download_test_folder_from_drive(output_dir="test"):
-    import gdown
-    folder_id = TEST_FOLDER_URL.split("folders/")[1].split("?")[0]
-    gdown.download_folder(id=folder_id, output=output_dir, quiet=False, use_cookies=False)
+def download_and_extract_test_zip():
+    if not os.path.exists(EXTRACT_DIR):
+        gdown.download(TEST_ZIP_URL, ZIP_PATH, quiet=False)
+        with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+            zip_ref.extractall(EXTRACT_DIR)
 
 # Function to load images and labels
 def load_data(folder_path, target_size):
@@ -124,18 +128,20 @@ def evaluate_model(model, test_data_path, target_size):
 # Streamlit app structure
 def show_classify():
     st.title("Cancer Detection Model Evaluation")
-    st.write("Select a model and use the provided test dataset from Google Drive.")
+    st.write("Select a model and use the provided test dataset from Google Drive (zipped).")
 
     selected_model_name = st.selectbox("Choose a model", list(model_paths.keys()))
 
     if st.button("Download Test Data from Google Drive"):
-        download_test_folder_from_drive()
-        st.success("Test data downloaded!")
+        download_and_extract_test_zip()
+        st.success("Test data downloaded and extracted!")
 
     # Use the downloaded folder for evaluation
     test_data_path = "./test"
 
     if st.button("Evaluate Model"):
+        # Ensure test data is available
+        download_and_extract_test_zip()
         if os.path.exists(test_data_path):
             model_details = model_paths[selected_model_name]
             model = load_local_model(model_details['path'])
