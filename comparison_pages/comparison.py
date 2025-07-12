@@ -68,6 +68,13 @@ def download_and_extract_test_zip():
 def show_comparison():
     # Load images and labels
     def load_data(folder_path, target_size):
+        # Ensure test data is available before loading
+        download_and_extract_test_zip()
+        cancer_path = os.path.join(folder_path, 'CANCER')
+        non_cancer_path = os.path.join(folder_path, 'NON CANCER')
+        if not os.path.exists(cancer_path) or not os.path.exists(non_cancer_path):
+            st.error("Test data not found or folder structure is incorrect after extraction.")
+            return [], []
         images = []
         labels = []
         for label, category in enumerate(['CANCER', 'NON CANCER']):
@@ -132,10 +139,8 @@ def show_comparison():
 
     if st.button("Evaluate Selected Models"):
         results = []
-
         # Ensure test data is available
         download_and_extract_test_zip()
-
         for model_name in selected_models:
             model, target_size = load_selected_model(model_name)
             if model:
@@ -146,7 +151,6 @@ def show_comparison():
                     'Avg Cancer Probability (%)': cancer_prob,
                     'Avg Non Cancer Probability (%)': non_cancer_prob
                 })
-
         if results:
             df = pd.DataFrame(results)
             st.toast("Model comparison complete.")
