@@ -142,6 +142,10 @@ def show_classify():
     if st.button("Evaluate Model"):
         # Ensure test data is available
         download_and_extract_test_zip()
+        # Check for correct folder structure
+        if not os.path.exists(os.path.join(test_data_path, 'CANCER')) or not os.path.exists(os.path.join(test_data_path, 'NON CANCER')):
+            st.error("Test data not found or folder structure is incorrect after extraction.")
+            return
         if os.path.exists(test_data_path):
             model_details = model_paths[selected_model_name]
             model = load_local_model(model_details['path'])
