@@ -211,7 +211,7 @@ Streamlit Cloud provides a seamless way to host applications, ensuring that user
 
 #### Live App!
 
-check the live app[here](https://oral-cancer-detection-app.streamlit.app/)
+check the live app[here](https://oral-cancer-detection-by-arnav.streamlit.app/)
 
 ### 2. Deployment Using Docker
 
@@ -532,7 +532,7 @@ By addressing these areas, we hope to make our solution more robust, accessible,
 
 You can explore the live version of our Oral Cancer Detection project by visiting the following link:
 
-[Live Streamlit App](https://oral-cancer-detection-app.streamlit.app/)🌐
+[Live Streamlit App](https://oral-cancer-detection-by-arnav.streamlit.app/)🌐
 
 ### How to Use:
 
