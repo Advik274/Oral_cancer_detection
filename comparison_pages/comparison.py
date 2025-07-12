@@ -45,6 +45,14 @@ def download_model_if_needed(model_name, local_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
 
+def download_test_folder_from_drive(folder_url, output_dir="test"):
+    # Extract folder ID from URL
+    if "folders/" in folder_url:
+        folder_id = folder_url.split("folders/")[1].split("?")[0]
+    else:
+        folder_id = folder_url
+    gdown.download_folder(id=folder_id, output=output_dir, quiet=False, use_cookies=False)
+
 def show_comparison():
     # Load images and labels
     def load_data(folder_path, target_size):
@@ -103,13 +111,26 @@ def show_comparison():
 
     selected_models = st.multiselect("Select Models to Compare", list(model_paths.keys()))
 
+    # New: Google Drive folder input
+    test_folder_url = st.text_input("Paste your Google Drive test folder URL here:")
+
+    if st.button("Download Test Data from Google Drive"):
+        if test_folder_url:
+            download_test_folder_from_drive(test_folder_url)
+            st.success("Test data downloaded!")
+        else:
+            st.error("Please enter a valid Google Drive folder URL.")
+
+    # Use the downloaded folder for evaluation
+    test_data_path = "./test"
+
     if st.button("Evaluate Selected Models"):
         results = []
 
         for model_name in selected_models:
             model, target_size = load_selected_model(model_name)
             if model:
-                accuracy, cancer_prob, non_cancer_prob = evaluate_model(model, "./test", target_size)
+                accuracy, cancer_prob, non_cancer_prob = evaluate_model(model, test_data_path, target_size)
                 results.append({
                     'Model': model_name,
                     'Accuracy (%)': accuracy,
