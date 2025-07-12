@@ -46,6 +46,14 @@ def download_model_if_needed(model_name, local_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, local_path, quiet=False)
 
+def download_test_folder_from_drive(folder_url, output_dir="test"):
+    # Extract folder ID from URL
+    if "folders/" in folder_url:
+        folder_id = folder_url.split("folders/")[1].split("?")[0]
+    else:
+        folder_id = folder_url
+    gdown.download_folder(id=folder_id, output=output_dir, quiet=False, use_cookies=False)
+
 # Function to load images and labels
 def load_data(folder_path, target_size):
     images = []
@@ -116,15 +124,23 @@ def evaluate_model(model, test_data_path, target_size):
 # Streamlit app structure
 def show_classify():
     st.title("Cancer Detection Model Evaluation")
-    st.write("Select a model and upload your test dataset folder containing subfolders for 'CANCER' and 'NON CANCER' images.")
+    st.write("Select a model and provide your test dataset folder (Google Drive link).")
 
-    # User selects the model
     selected_model_name = st.selectbox("Choose a model", list(model_paths.keys()))
 
-    # Upload folder using Streamlit's text input
-    test_data_path = st.text_input("Enter the path to the test data folder:", "./test")  # Default path
+    # New: Google Drive folder input
+    test_folder_url = st.text_input("Paste your Google Drive test folder URL here:")
 
-    # Button to evaluate the model
+    if st.button("Download Test Data from Google Drive"):
+        if test_folder_url:
+            download_test_folder_from_drive(test_folder_url)
+            st.success("Test data downloaded!")
+        else:
+            st.error("Please enter a valid Google Drive folder URL.")
+
+    # Use the downloaded folder for evaluation
+    test_data_path = "./test"
+
     if st.button("Evaluate Model"):
         if os.path.exists(test_data_path):
             model_details = model_paths[selected_model_name]
@@ -132,7 +148,7 @@ def show_classify():
             if model:
                 evaluate_model(model, test_data_path, model_details['target_size'])
         else:
-            st.error("The specified folder does not exist. Please check the path.")
+            st.error("The test data folder does not exist. Please download it first.")
 
 # Main function to run the app
 if __name__ == "__main__":
