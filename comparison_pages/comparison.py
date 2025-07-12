@@ -64,6 +64,12 @@ def download_and_extract_test_zip():
         gdown.download(TEST_ZIP_URL, ZIP_PATH, quiet=False)
         with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
             zip_ref.extractall(EXTRACT_DIR)
+        # Debug: List the extracted files and folders
+        import os
+        for root, dirs, files in os.walk(EXTRACT_DIR):
+            st.write(f"Extracted to: {root}")
+            st.write(f"Subfolders: {dirs}")
+            st.write(f"Files: {files}")
 
 def show_comparison():
     # Load images and labels
