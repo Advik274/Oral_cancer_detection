@@ -5,6 +5,7 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.models import load_model
 import streamlit as st
 import gdown
+import zipfile
 
 # Define local model paths and target sizes
 model_paths = {
@@ -48,10 +49,21 @@ def download_model_if_needed(model_name, local_path):
 # Hardcoded Google Drive test folder URL
 TEST_FOLDER_URL = "https://drive.google.com/drive/folders/1M2w4lWrV5iJ3lML78tqv2MLIij8Q89U8?usp=sharing"
 
+# Hardcoded Google Drive test zip file URL
+TEST_ZIP_URL = "https://drive.google.com/uc?id=1dCJGxtebi9yJ-ZVeVb50UeATuUdhgxx3"
+ZIP_PATH = "test.zip"
+EXTRACT_DIR = "test"
+
 def download_test_folder_from_drive(output_dir="test"):
     import gdown
     folder_id = TEST_FOLDER_URL.split("folders/")[1].split("?")[0]
     gdown.download_folder(id=folder_id, output=output_dir, quiet=False, use_cookies=False)
+
+def download_and_extract_test_zip():
+    if not os.path.exists(EXTRACT_DIR):
+        gdown.download(TEST_ZIP_URL, ZIP_PATH, quiet=False)
+        with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+            zip_ref.extractall(EXTRACT_DIR)
 
 def show_comparison():
     # Load images and labels
@@ -112,14 +124,17 @@ def show_comparison():
     selected_models = st.multiselect("Select Models to Compare", list(model_paths.keys()))
 
     if st.button("Download Test Data from Google Drive"):
-        download_test_folder_from_drive()
-        st.success("Test data downloaded!")
+        download_and_extract_test_zip()
+        st.success("Test data downloaded and extracted!")
 
     # Use the downloaded folder for evaluation
     test_data_path = "./test"
 
     if st.button("Evaluate Selected Models"):
         results = []
+
+        # Ensure test data is available
+        download_and_extract_test_zip()
 
         for model_name in selected_models:
             model, target_size = load_selected_model(model_name)
