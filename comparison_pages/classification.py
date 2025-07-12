@@ -129,7 +129,7 @@ def show_classify():
     selected_model_name = st.selectbox("Choose a model", list(model_paths.keys()))
 
     # New: Google Drive folder input
-    test_folder_url = st.text_input("Paste your Google Drive test folder URL here:")
+    test_folder_url = st.text_input("https://drive.google.com/drive/folders/1M2w4lWrV5iJ3lML78tqv2MLIij8Q89U8?usp=sharing")
 
     if st.button("Download Test Data from Google Drive"):
         if test_folder_url:
