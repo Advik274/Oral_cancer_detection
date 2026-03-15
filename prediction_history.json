@@ -183,5 +183,10 @@
         "file_name": "001.jpeg",
         "model_used": "ResNet50",
         "prediction": "Cancer"
+    },
+    {
+        "file_name": "WIN_20260315_20_34_48_Pro.jpg",
+        "model_used": "CNN",
+        "prediction": "Cancer"
     }
 ]

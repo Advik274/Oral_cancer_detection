@@ -40,7 +40,7 @@ model_paths = {
 if 'saved_predictions' not in st.session_state:
     st.session_state.saved_predictions = []
 if 'predictions' not in st.session_state:
-    st.session_state.predictions = []
+    st.session_state.predictions = np.array([])
 if 'uploaded_images' not in st.session_state:
     st.session_state.uploaded_images = []
 
@@ -56,7 +56,8 @@ st.session_state.saved_predictions = load_existing_predictions()
 def save_predictions_to_history(uploaded_files, predictions, model_name):
     prediction_data = []
     for i, uploaded_file in enumerate(uploaded_files):
-        actual = 'Cancer' if predictions[i][0] == 0 else 'Non Cancer'
+        prob = predictions[i][0]
+        actual = 'Cancer' if prob < 0.5 else 'Non Cancer'
         prediction_data.append({
             'file_name': uploaded_file.name,
             'model_used': model_name,
@@ -89,6 +90,12 @@ def load_uploaded_images(uploaded_files, target_size):
     return np.array(images)
 
 def show_image_prediction():
+    # Initialize session state variables if they don't exist
+    if 'predictions' not in st.session_state or st.session_state.predictions is None:
+        st.session_state.predictions = np.array([])
+    if 'uploaded_images' not in st.session_state or st.session_state.uploaded_images is None:
+        st.session_state.uploaded_images = []
+
     # Streamlit UI
     st.title('Oral Cancer Detection Model Evaluation')
 
@@ -103,10 +110,15 @@ def show_image_prediction():
         target_size = model_paths[model_selection]['target_size']
         X_test = load_uploaded_images(uploaded_files, target_size)
 
+        # Normalization toggle (some models might behave better with it on real-world images)
+        normalize = st.sidebar.checkbox("Normalize Images (Scale pixels to 0-1)", value=False, help="Try this if real-world photos show unexpected results. Most of our models were trained on 0-255 range, but some may benefit from normalization.")
+
         # Function to evaluate the model on uploaded images
-        def evaluate_model(model, images):
+        def evaluate_model(model, images, normalize=False):
+            if normalize:
+                images = images / 255.0
             predictions = model.predict(images)
-            return (predictions > 0.5).astype(int)
+            return predictions
 
         # Add a button to trigger predictions
         if st.button('Predict'):
@@ -119,7 +131,7 @@ def show_image_prediction():
                     model_to_use = load_model(model_path)
 
                 with st.spinner("Evaluating images..."):
-                    st.session_state.predictions = evaluate_model(model_to_use, X_test)
+                    st.session_state.predictions = evaluate_model(model_to_use, X_test, normalize=normalize)
                     st.session_state.uploaded_images = uploaded_files
 
                 st.toast("✨ Images predicted successfully!")
@@ -127,11 +139,12 @@ def show_image_prediction():
                 # Display predictions
                 st.subheader('Predictions:')
                 for i, uploaded_file in enumerate(uploaded_files):
-                    # Handle case where there might be fewer predictions than images
                     if i < len(st.session_state.predictions):
-                        actual = 'Cancer' if st.session_state.predictions[i][0] == 0 else 'Non Cancer'
-                        caption = f'Predicted: {actual}'
-                        st.image(uploaded_file, caption=caption, use_column_width=True)
+                        # predictions[i][0] is probability of class 1 (Non Cancer)
+                        prob = st.session_state.predictions[i][0]
+                        actual = 'Cancer' if prob < 0.5 else 'Non Cancer'
+                        caption = f'Predicted: {actual} (Prob: {prob:.4f})'
+                        st.image(uploaded_file, caption=caption, use_container_width=True)
 
                         if actual == 'Cancer':
                             warning_message = random.choice(cancer_warning_messages)
@@ -159,7 +172,8 @@ def show_image_prediction():
         prediction_images = []
         for i, uploaded_file in enumerate(st.session_state.uploaded_images):
             if i < len(st.session_state.predictions):  # Safety check
-                actual = 'Cancer' if st.session_state.predictions[i][0] == 0 else 'Non Cancer'
+                prob = st.session_state.predictions[i][0]
+                actual = 'Cancer' if prob < 0.5 else 'Non Cancer'
                 image = Image.open(uploaded_file)
                 pred_image = image.copy()
                 plt.imshow(pred_image)
@@ -185,26 +199,8 @@ def show_image_prediction():
                 mime='application/zip'
             )
 
-    # Utility function to convert an image to base64 for display
-    def image_to_base64(image: Image.Image) -> str:
-        buffered = io.BytesIO()
-        image.save(buffered, format="PNG")
-        return base64.b64encode(buffered.getvalue()).decode()
-
-    # Display logo
-    logo_path = "./assets/logo.png"
-    if os.path.exists(logo_path):
-        try:
-            logo_image = Image.open(logo_path)
-            logo_base64 = image_to_base64(logo_image)
-            st.sidebar.markdown(
-                f"""
-                <img src="data:image/jpeg;base64,{logo_base64}"
-                    style="border-radius: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 90%; height: auto;" />
-                """, unsafe_allow_html=True
-            )
-        except Exception as e:
-            st.sidebar.warning(f"Could not load logo: {e}")
+    import utils
+    utils.display_sidebar_logo()
 
 # Google Drive file IDs for each model
 MODEL_DRIVE_IDS = {

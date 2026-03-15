@@ -61,20 +61,5 @@ def show_home_content():
         key='Oral Cancer Detection 2'
     )
 
-    def image_to_base64(image: Image.Image) -> str:
-        buffered = io.BytesIO()
-        image.save(buffered, format="JPEG")
-        return base64.b64encode(buffered.getvalue()).decode()
-    logo_path = "./assets/logo.jpg"  # Update with your logo file path
-    logo_image = Image.open(logo_path)
-
-    # Convert the logo image to base64
-    logo_base64 = image_to_base64(logo_image)
-
-    # Display the logo with custom CSS styles
-    st.sidebar.markdown(
-        f"""
-        <img src="data:image/jpeg;base64,{logo_base64}"
-            style="border-radius: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 90%; height: auto;" />
-        """, unsafe_allow_html=True
-    )
+    import utils
+    utils.display_sidebar_logo("./assets/logo.jpg")

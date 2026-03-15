@@ -65,7 +65,6 @@ def download_and_extract_test_zip():
         with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
             zip_ref.extractall(EXTRACT_DIR)
         # Debug: List the extracted files and folders
-        import os
         for root, dirs, files in os.walk(EXTRACT_DIR):
             st.write(f"Extracted to: {root}")
             st.write(f"Subfolders: {dirs}")
@@ -76,36 +75,66 @@ def show_comparison():
     def load_data(folder_path, target_size):
         # Ensure test data is available before loading
         download_and_extract_test_zip()
+
+        # Fix nested test/test structure if it exists
+        if os.path.exists(os.path.join(folder_path, "test")):
+            folder_path = os.path.join(folder_path, "test")
+
         cancer_path = os.path.join(folder_path, 'CANCER')
         non_cancer_path = os.path.join(folder_path, 'NON CANCER')
+
+        # Fallback to lowercase if uppercase doesn't exist
         if not os.path.exists(cancer_path) or not os.path.exists(non_cancer_path):
-            st.error("Test data not found or folder structure is incorrect after extraction.")
-            return [], []
+            cancer_path = os.path.join(folder_path, 'cancer')
+            non_cancer_path = os.path.join(folder_path, 'non cancer')
+
+        if not os.path.exists(cancer_path) or not os.path.exists(non_cancer_path):
+            st.error(f"Folders not found. Checked: {folder_path}/CANCER and {folder_path}/cancer")
+            return np.array([]), np.array([])
+
         images = []
         labels = []
-        for label, category in enumerate(['CANCER', 'NON CANCER']):
+
+        # Use the folders we found
+        categories = ['CANCER', 'NON CANCER']
+        if not os.path.exists(os.path.join(folder_path, 'CANCER')):
+            categories = ['cancer', 'non cancer']
+
+        for label, category in enumerate(categories):
             category_folder = os.path.join(folder_path, category)
+            if not os.path.exists(category_folder):
+                continue
             for file_name in os.listdir(category_folder):
                 image_path = os.path.join(category_folder, file_name)
-                image = load_img(image_path, target_size=target_size)
-                image_array = img_to_array(image)
-                images.append(image_array)
-                labels.append(label)
+                try:
+                    image = load_img(image_path, target_size=target_size)
+                    image_array = img_to_array(image)
+                    images.append(image_array)
+                    labels.append(label)
+                except Exception as e:
+                    st.warning(f"Error loading {image_path}: {e}")
+
         return np.array(images), np.array(labels)
 
     # Evaluate a given model
     def evaluate_model(model, test_path, target_size):
         images, labels = load_data(test_path, target_size)
-        images = images / 255.0  # Normalize
+        if len(images) == 0:
+            return 0, 0, 0
+        # images = images / 255.0  # Normalize - Removed as models use [0, 255]
         predictions = model.predict(images)
         predicted_classes = (predictions > 0.5).astype(int)
 
         accuracy = np.mean(predicted_classes.flatten() == labels.flatten()) * 100
 
         # Probability stats
-        total_cancer_prob = np.sum(predictions)
-        total_non_cancer_prob = np.sum(1 - predictions)
+        # predictions is probability of class 1 (Non Cancer)
+        total_non_cancer_prob = np.sum(predictions)
+        total_cancer_prob = np.sum(1 - predictions)
         num_images = len(predictions)
+
+        if num_images == 0:
+            return 0, 0, 0
 
         avg_cancer_prob = (total_cancer_prob / num_images) * 100
         avg_non_cancer_prob = (total_non_cancer_prob / num_images) * 100
@@ -142,6 +171,8 @@ def show_comparison():
 
     # Use the downloaded folder for evaluation
     test_data_path = "./test"
+    if os.path.exists(os.path.join(test_data_path, "test")):
+        test_data_path = os.path.join(test_data_path, "test")
 
     if st.button("Evaluate Selected Models"):
         results = []

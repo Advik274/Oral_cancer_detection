@@ -60,7 +60,7 @@ def show_plots():
                 img_data = tmpfile.read()
 
         # Display the plot
-        st.image(img_data, caption=f"{selected_model_name} Architecture", use_column_width=True)
+        st.image(img_data, caption=f"{selected_model_name} Architecture", use_container_width=True)
 
         # Download button
         st.download_button(

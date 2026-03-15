@@ -50,11 +50,14 @@ def download_model_if_needed(model_name, local_path):
 
 # Predict a single image
 def predict_image(model, image, target_size):
-    image = cv2.resize(image, target_size)
-    image = img_to_array(image)
-    image = np.expand_dims(image, axis=0)
-    prediction = model.predict(image)
-    return (prediction > 0.5).astype(int)
+    # Convert BGR (OpenCV) to RGB (Model expectation)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image_resized = cv2.resize(image_rgb, target_size)
+    image_array = img_to_array(image_resized)
+    image_batch = np.expand_dims(image_array, axis=0)
+    # image_batch = image_batch / 255.0  # Optional normalization
+    prediction = model.predict(image_batch)
+    return prediction
 
 # Convert image to base64 for sidebar logo
 def image_to_base64(image: Image.Image) -> str:
@@ -96,12 +99,13 @@ def show_real_time_detection():
                     break
 
                 prediction = predict_image(model, frame, target_size)
-                result = 'Cancer' if prediction[0][0] == 0 else 'Non Cancer'
+                prediction_prob = prediction[0][0]
+                result = 'Cancer' if prediction_prob < 0.5 else 'Non Cancer'
 
                 cv2.putText(frame, f'Prediction: {result}', (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                video_placeholder.image(frame_rgb, channels='RGB', use_column_width=True)
+                video_placeholder.image(frame_rgb, channels='RGB', use_container_width=True)
 
             cap.release()
 
@@ -109,19 +113,8 @@ def show_real_time_detection():
         if st.button('Stop Video'):
             st.session_state.capturing = False
 
-    # Sidebar logo
-    logo_path = "./assets/logo.png"
-    if os.path.exists(logo_path):
-        logo_image = Image.open(logo_path)
-        logo_base64 = image_to_base64(logo_image)
-        st.sidebar.markdown(
-            f"""
-            <img src="data:image/png;base64,{logo_base64}"
-                style="border-radius: 30px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 90%; height: auto;" />
-            """, unsafe_allow_html=True
-        )
-    else:
-        st.sidebar.warning("Logo not found.")
+    import utils
+    utils.display_sidebar_logo()
 
 # Entry point
 if __name__ == "__main__":

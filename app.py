@@ -1,17 +1,14 @@
-from streamlit_option_menu import option_menu
-from PIL import Image
-import streamlit as st
-from streamlit_lottie import st_lottie
-import json
-import base64
 import io
+import streamlit as st
+import utils
+from streamlit_option_menu import option_menu
 
 # Set the page configuration with a tongue or mouth emoji as the page icon
 st.set_page_config(page_title="Oral Cancer Detection",
                    page_icon="🦷", layout="wide")
 
 # Load and display logo
-st.logo("./assets/logo1.png", size="large", link=None, icon_image=None)
+utils.safe_set_logo("./assets/logo1.png")
 
 st.sidebar.title("Oral Cancer Detection")
 
@@ -63,6 +60,7 @@ def display_page(page_name):
 
 # Sidebar for navigation using option_menu
 with st.sidebar:
+    utils.display_sidebar_logo()
     selected_page = option_menu(
         menu_title=None,  # Required
         options=["Home", "About",  "Model Comparison", "Image Prediction",
@@ -71,7 +69,6 @@ with st.sidebar:
                "clock-history"],  # Icons for each page
         menu_icon="cast",  # Main menu icon
         default_index=0,  # Default page (Home)
-        orientation="vertical",  # Keep the menu vertical
     )
 
 # Call the function to display the selected page

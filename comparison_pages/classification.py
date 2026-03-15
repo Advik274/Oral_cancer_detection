@@ -58,6 +58,7 @@ def download_and_extract_test_zip():
         with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
             zip_ref.extractall(EXTRACT_DIR)
         # Debug: List the extracted files and folders
+        import os
         for root, dirs, files in os.walk(EXTRACT_DIR):
             st.write(f"Extracted to: {root}")
             st.write(f"Subfolders: {dirs}")
@@ -143,6 +144,8 @@ def show_classify():
 
     # Use the downloaded folder for evaluation
     test_data_path = "./test"
+    if os.path.exists(os.path.join(test_data_path, "test")):
+        test_data_path = os.path.join(test_data_path, "test")
 
     if st.button("Evaluate Model"):
         # Ensure test data is available
