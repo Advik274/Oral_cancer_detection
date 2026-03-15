@@ -7,7 +7,7 @@ import io
 
 
 def show_home_content():
-    st.write("# Welcome to the OralGuard🦷")
+    st.write("# Welcome to the Oraluard🦷")
 
     def load_lottie_file(filepath: str):
         with open(filepath, 'r', encoding='utf-8') as file:  # Specify UTF-8 encoding
