@@ -1,0 +1,11 @@
+[theme]
+base="light"
+primaryColor="#20cfd2"
+secondaryBackgroundColor="#d5ece8"
+
+[server]
+# Automatically updates the app when the code is saved
+runOnSave = true
+
+[client]
+showSidebarNavigation = false
